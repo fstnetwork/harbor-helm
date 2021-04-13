@@ -1,0 +1,60 @@
+{{- if eq .Values.expose.type "istio" }}
+{{- $istio := .Values.expose.istio -}}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: "{{ include "harbor.virtualservice" . }}"
+  labels:
+{{ include "harbor.labels" . | indent 4 }}
+spec:
+  gateways: {{ $istio.gateways }}
+  hosts:
+    - {{ $istio.hosts.core }}
+  http:
+    - match:
+        - uri:
+            prefix: /api/
+        - uri:
+            prefix: /service/
+        - uri:
+            prefix: /v2/
+        - uri:
+            prefix: /chartrepo/
+        - uri:
+            prefix: /c/
+      route:
+        - destination:
+            host: {{ include "harbor.core" . }}
+            port:
+              number: {{ include "harbor.core.servicePort" . }}
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: {{ include "harbor.portal" . }}
+            port:
+              number: {{ include "harbor.portal.servicePort" . }}
+{{- if .Values.notary.enabled  }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: "{{ include "harbor.virtualservice-notary" . }}"
+  labels:
+{{ include "harbor.labels" . | indent 4 }}
+spec:
+  gateways: {{ $istio.gateways }}
+  hosts:
+    - {{ $istio.hosts.notary }}
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: {{ include "harbor.notary-server" . }}
+            port:
+              number: 4443
+{{- end }}
+{{- end }}

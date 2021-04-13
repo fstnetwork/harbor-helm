@@ -55,6 +55,11 @@ expose:
     harbor:
       # harbor ingress-specific annotations
       annotations: {}
+  istio:
+    gateways: []
+    hosts:
+      core: core.harbor.domain
+      notary: notary.harbor.domain
   clusterIP:
     # The name of ClusterIP service
     name: harbor
@@ -115,6 +120,8 @@ expose:
 # the value of "expose.clusterIP.name"
 # 3) if "expose.type" is "nodePort", the "domain" should be
 # the IP address of k8s node
+# 4) if "expose.type" is "istio", the "domain" should be
+# the value of "expose.istio.hosts.core"
 #
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
 externalURL: https://core.harbor.domain

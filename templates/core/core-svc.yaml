@@ -12,9 +12,11 @@ spec:
     - name: {{ ternary "https-web" "http-web" .Values.internalTLS.enabled }}
       port: {{ template "harbor.core.servicePort" . }}
       targetPort: {{ template "harbor.core.containerPort" . }}
+      appProtocol: {{ ternary "https" "http" .Values.internalTLS.enabled }}
 {{- if .Values.metrics.enabled}}
     - name: {{ template "harbor.metricsPortName" . }}
       port: {{ .Values.metrics.core.port }}
+      appProtocol: http
 {{- end }}
   selector:
 {{ include "harbor.matchLabels" . | indent 4 }}

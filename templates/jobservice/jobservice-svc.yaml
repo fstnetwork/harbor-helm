@@ -9,9 +9,11 @@ spec:
     - name: {{ ternary "https-jobservice" "http-jobservice" .Values.internalTLS.enabled }}
       port: {{ template "harbor.jobservice.servicePort" . }}
       targetPort: {{ template "harbor.jobservice.containerPort" . }}
+      appProtocol: {{ ternary "https" "http" .Values.internalTLS.enabled }}
 {{- if .Values.metrics.enabled }}
     - name: {{ template "harbor.metricsPortName" . }}
       port: {{ .Values.metrics.jobservice.port }}
+      appProtocol: http
 {{- end }}
   selector:
 {{ include "harbor.matchLabels" . | indent 4 }}

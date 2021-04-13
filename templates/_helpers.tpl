@@ -56,7 +56,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.autoGenCertForNginx" -}}
-  {{- if and (eq (include "harbor.autoGenCert" .) "true") (ne .Values.expose.type "ingress") -}}
+  {{- if and (eq (include "harbor.autoGenCert" .) "true") (ne .Values.expose.type "ingress") (ne .Values.expose.type "istio") -}}
     {{- printf "true" -}}
   {{- else -}}
     {{- printf "false" -}}
@@ -275,6 +275,14 @@ postgres://{{ template "harbor.database.username" . }}:{{ template "harbor.datab
 
 {{- define "harbor.ingress-notary" -}}
   {{- printf "%s-ingress-notary" (include "harbor.fullname" .) -}}
+{{- end -}}
+
+{{- define "harbor.virtualservice" -}}
+  {{- printf "%s" (include "harbor.fullname" .) -}}
+{{- end -}}
+
+{{- define "harbor.virtualservice-notary" -}}
+  {{- printf "%s-notary" (include "harbor.fullname" .) -}}
 {{- end -}}
 
 {{- define "harbor.noProxy" -}}

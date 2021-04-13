@@ -10,6 +10,7 @@ spec:
     - name: {{ ternary "https-trivy" "http-trivy" .Values.internalTLS.enabled }}
       protocol: TCP
       port: {{ template "harbor.trivy.servicePort" . }}
+      appProtocol: {{ ternary "https" "http" .Values.internalTLS.enabled }}
   selector:
 {{ include "harbor.matchLabels" . | indent 4 }}
     component: trivy

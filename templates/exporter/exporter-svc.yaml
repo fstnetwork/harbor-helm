@@ -9,6 +9,7 @@ spec:
   ports:
     - name: {{ template "harbor.metricsPortName" . }}
       port: {{ .Values.metrics.exporter.port }}
+      appProtocol: http
   selector:
 {{ include "harbor.matchLabels" . | indent 4 }}
     component: exporter
