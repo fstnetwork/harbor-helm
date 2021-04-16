@@ -1,3 +1,5 @@
+{{- $registryPVC := .Values.persistence.persistentVolumeClaim.registry -}}
+{{- $mountRegistryPVC := and .Values.persistence.enabled (eq .Values.persistence.imageChartStorage.type "filesystem") (not $registryPVC.existingClaim) (eq $registryPVC.accessMode "ReadWriteMany") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -125,6 +127,11 @@ spec:
         {{- if .Values.caBundleSecretName }}
 {{ include "harbor.caBundleVolumeMount" . | indent 8 }}
         {{- end }}
+        {{- if $mountRegistryPVC }}
+        - name: registry-data
+          mountPath: {{ .Values.persistence.imageChartStorage.filesystem.rootdirectory }}
+          subPath: {{ .Values.persistence.persistentVolumeClaim.registry.subPath }}
+        {{- end }}
 {{- if .Values.core.resources }}
         resources:
 {{ toYaml .Values.core.resources | indent 10 }}
@@ -177,6 +184,11 @@ spec:
         emptyDir: {}
       {{- if .Values.caBundleSecretName }}
 {{ include "harbor.caBundleVolume" . | indent 6 }}
+      {{- end }}
+      {{- if $mountRegistryPVC }}
+      - name: registry-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.persistentVolumeClaim.registry.existingClaim | default (include "harbor.registry" .) }}
       {{- end }}
     {{- with .Values.core.nodeSelector }}
       nodeSelector:

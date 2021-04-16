@@ -63,3 +63,5 @@ data:
   #make the GC time window configurable for testing
   GC_TIME_WINDOW_HOURS: "{{ .Values.core.gcTimeWindowHours }}"
   {{- end }}
+
+  IMAGE_STORE_PATH: "{{ .Values.persistence.imageChartStorage.filesystem.rootdirectory }}"
