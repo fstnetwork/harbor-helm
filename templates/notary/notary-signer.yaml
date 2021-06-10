@@ -39,16 +39,18 @@ spec:
         image: {{ .Values.notary.signer.image.repository }}:{{ .Values.notary.signer.image.tag }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         livenessProbe:
-          httpGet:
-            path: /
-            scheme: "HTTPS"
+          #httpGet:
+          #  path: /
+          #  scheme: "HTTPS"
+          tcpSocket:
             port: 7899
           initialDelaySeconds: 300
           periodSeconds: 10
         readinessProbe:
-          httpGet:
-            path: /
-            scheme: "HTTPS"
+          #httpGet:
+          #  path: /
+          #  scheme: "HTTPS"
+          tcpSocket:
             port: 7899
           initialDelaySeconds: 20
           periodSeconds: 10
